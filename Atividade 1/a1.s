@@ -1,36 +1,24 @@
 # RA: 248255
-# a0 0x110
-# a1 -> guarda linha e a2-> guarda números que serão impressos nas colunas da linha
 
 .data
 
-    numeros: .word 0b00000000000000111, 0b00000000000000001, 0b00000000000000111, 0b00000000000000100, 0b00000000000000111 
-             .word 0b00000000000000101, 0b00000000000000101, 0b00000000000000111, 0b00000000000000001, 0b00000000000000001 
-             .word 0b00000000000000111, 0b00000000000000101, 0b00000000000000111, 0b00000000000000101, 0b00000000000000111 
-             .word 0b00000000000000111, 0b00000000000000001, 0b00000000000000111, 0b00000000000000100, 0b00000000000000111 
-             .word 0b00000000000000111, 0b00000000000000100, 0b00000000000000111, 0b00000000000000001, 0b00000000000000111 
-             .word 0b00000000000000111, 0b00000000000000100, 0b00000000000000111, 0b00000000000000001, 0b00000000000000111 
-
-#    dois: .word 0b00000000000000111, 0b00000000000000001, 0b00000000000000111, 0b00000000000000100, 0b00000000000000111
- 
-#    quatro: .word 0b00000000000000101, 0b00000000000000101, 0b00000000000000111, 0b00000000000000001, 0b00000000000000001
-
-#    oito: .word 0b00000000000000111, 0b00000000000000101, 0b00000000000000111, 0b00000000000000101, 0b00000000000000111 
-
-#    cinco: .word 0b00000000000000111, 0b00000000000000100, 0b00000000000000111, 0b00000000000000001, 0b00000000000000111
-
-
+    numeros: .word 0b00000000000000111, 0b00000000000000001, 0b00000000000000111, 0b00000000000000100, 0b00000000000000111 # 2
+             .word 0b00000000000000101, 0b00000000000000101, 0b00000000000000111, 0b00000000000000001, 0b00000000000000001 # 4
+             .word 0b00000000000000111, 0b00000000000000101, 0b00000000000000111, 0b00000000000000101, 0b00000000000000111 # 8
+             .word 0b00000000000000111, 0b00000000000000001, 0b00000000000000111, 0b00000000000000100, 0b00000000000000111 # 2
+             .word 0b00000000000000111, 0b00000000000000100, 0b00000000000000111, 0b00000000000000001, 0b00000000000000111 # 5
+             .word 0b00000000000000111, 0b00000000000000100, 0b00000000000000111, 0b00000000000000001, 0b00000000000000111 # 5
 .text
 main:
     addi sp, zero, -4
     sw ra, 0(sp)
 
-    li s0, 0 # linha do topo 7
-    li s1, 0 # 6
-    li s2, 0 # linha do meio 5
-    li s3, 0 # 4
-    li s4, 0 # linha de baixo 3
-    la s5, numeros
+    li s0, 0 # linha 7
+    li s1, 0 # linha 6
+    li s2, 0 # linha 5
+    li s3, 0 # linha 4
+    li s4, 0 # linha 3
+    la s5, numeros # guarda o vetor de números
     li s6, 120 
     add s7, zero, zero
     
@@ -45,8 +33,8 @@ main:
         call AtualizaRobo
 
         andi t6, s0, 15
-        bne t6, zero, semNumero
-        beq s7, s6, semNumero
+        bne t6, zero, semNumero # caso ainda não consigamos colocar o número na tela
+        beq s7, s6, semNumero # caso todos os números já foram passados 
 
         add t0, s5, s7 
         lw a0, 0(t0)
@@ -63,7 +51,7 @@ main:
         addi s7, s7, 20
         j while
 
-        semNumero:
+        semNumero: # apenas desloca todos os números para esquerda
             mv a0, s0
             mv a1, s1
             mv a2, s2
@@ -78,7 +66,8 @@ main:
 
             bne s0, zero, while
 
-    li a0, 2000
+    # aqui termino de atualizar a tela
+    li a0, 2000 
     call Pausa
     mv a0, s0
     mv a1, s1
@@ -95,7 +84,7 @@ main:
     ret
 
 
-Pausa:
+Pausa: 
     li t6, 0
     
     whilePausa:
@@ -104,7 +93,7 @@ Pausa:
 
     ret
 
-Deslocar:
+Deslocar: # Desloco os números para a esquerda da Tela do Robozinho (left shift)
     li t6, 0b11111111111111111
     slli a0, a0, 1
     slli a1, a1, 1
@@ -120,7 +109,7 @@ Deslocar:
 
     ret
 
-AtualizaRobo:
+AtualizaRobo: # Atualizo a tela do robozinho
     addi sp, sp, -20
     sw s0, 0(sp) 
     sw s1, 4(sp) 
